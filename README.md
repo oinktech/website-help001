@@ -1,9 +1,5 @@
-当然，这里是可直接复制的 `README.md` 文件内容：
+# Loading animation and external link confirmation script
 
-```markdown
-# 加載動畫與外部鏈接確認腳本
-
-此腳本在頁面導航過程中顯示加載動畫，並在嘗試導航到外部網站時提示用戶確認。該腳本支持多語言（英文/繁體中文），可以輕鬆地嵌入任何網站中。
 
 ## 目錄
 - [英文說明](#english-instructions)
