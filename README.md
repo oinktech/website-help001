@@ -1,7 +1,7 @@
 # Loading animation and external link confirmation script
 
 
-## 目錄
+## Table of contents
 - [English instructions](#english-instructions)
 - [繁體中文說明](#繁體中文說明)
 
