@@ -73,8 +73,8 @@
         }
     });
 
-    // Event listener for link clicks
-    document.addEventListener('click', function (event) {
+    // Function to handle link clicks
+    function handleLinkClick(event) {
         const target = event.target.closest('a');
         if (target) {
             event.preventDefault();
@@ -97,7 +97,10 @@
                 }, 500);
             }
         }
-    });
+    }
+
+    // Attach the click event handler to the document
+    document.addEventListener('click', handleLinkClick);
 
     // Hide the loader when the page has fully loaded
     window.addEventListener('load', hideLoader);
