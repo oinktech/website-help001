@@ -1,6 +1,5 @@
 # Loading animation and external link confirmation script
 
-
 ## Table of contents
 - [English instructions](#english-instructions)
 - [繁體中文說明](#繁體中文說明)
@@ -16,7 +15,15 @@
     ```html
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
     ```
-2. **Automatic Handling**: The script will automatically:
+2. **Dynamic Loading**: Alternatively, you can dynamically load the script with the following JavaScript code:
+    ```html
+    <script>
+        const script = document.createElement('script');
+        script.src = 'https://oinktech.github.io/website-help001/script.js';
+        document.head.appendChild(script);
+    </script>
+    ```
+3. **Automatic Handling**: The script will automatically:
     - Show a loading spinner when navigating within the site.
     - Prompt a confirmation dialog when navigating to an external website.
 
@@ -73,7 +80,15 @@ Here’s a simple example to integrate the script into your HTML:
     ```html
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
     ```
-2. **自動處理**: 腳本將自動處理以下情況：
+2. **動態加載**: 如果您希望通過 JavaScript 動態加載腳本，可以使用以下代碼：
+    ```html
+    <script>
+        const script = document.createElement('script');
+        script.src = 'https://oinktech.github.io/website-help001/script.js';
+        document.head.appendChild(script);
+    </script>
+    ```
+3. **自動處理**: 腳本將自動處理以下情況：
     - 在站點內導航時顯示加載動畫。
     - 在跳轉到外部網站時彈出確認對話框。
 
@@ -123,4 +138,3 @@ Here’s a simple example to integrate the script into your HTML:
 - [CSS Tricks - Loading Spinners](https://css-tricks.com/snippets/css/loading-spinners/)
 - [JavaScript Confirmation Dialog](https://developer.mozilla.org/en-US/docs/Web/API/Window/confirm)
 ```
-
