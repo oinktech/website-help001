@@ -1,45 +1,130 @@
-# Loading Spinner and External Link Confirmation Script
+当然，这里是可直接复制的 `README.md` 文件内容：
 
-This script shows a loading spinner during page navigation and prompts users when attempting to navigate to external websites. The script is multilingual (English/Chinese) and can be easily included in any website.
+```markdown
+# 加載動畫與外部鏈接確認腳本
 
-## Table of Contents
-- [English Instructions](#english-instructions)
-- [中文说明](#中文说明)
+此腳本在頁面導航過程中顯示加載動畫，並在嘗試導航到外部網站時提示用戶確認。該腳本支持多語言（英文/繁體中文），可以輕鬆地嵌入任何網站中。
 
-## English Instructions
+## 目錄
+- [英文說明](#english-instructions)
+- [繁體中文說明](#繁體中文說明)
+
+## 英文說明
 
 ### Features
-1. Displays a loading spinner during page navigation.
-2. Prompts for user confirmation when clicking on an external link.
+1. **Loading Spinner**: Displays a loading spinner during page navigation.
+2. **External Link Confirmation**: Prompts for user confirmation when clicking on an external link.
 
 ### Usage
-1. Include the script in your HTML file by adding the following line within the `<head>` or at the end of the `<body>`:
+1. **Include the Script**: Add the following line to your HTML file within the `<head>` or at the end of the `<body>`:
     ```html
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
     ```
-2. The script will automatically handle the following:
+2. **Automatic Handling**: The script will automatically:
     - Show a loading spinner when navigating within the site.
     - Prompt a confirmation dialog when navigating to an external website.
 
 ### Customization
-- The spinner's appearance can be modified by editing the `.loading-spinner` CSS within the script.
-- To change the external link confirmation message, update the text inside `confirm('Are you sure you want to navigate to an external website?');`.
+- **Spinner Appearance**: Modify the spinner's appearance by editing the `.loading-spinner` CSS within the script.
+- **Confirmation Message**: Update the text inside `confirm('Are you sure you want to navigate to an external website?');` to change the external link confirmation message.
 
-## 中文说明
+### Example
+Here’s a simple example to integrate the script into your HTML:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <script src="https://oinktech.github.io/website-help001/script.js"></script>
+    <style>
+        /* Custom Spinner Style */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #00bfff;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Website</h1>
+    <a href="https://externalwebsite.com">Visit External Website</a>
+</body>
+</html>
+```
+
+## 繁體中文說明
 
 ### 功能
-1. 在页面跳转时显示加载圈。
-2. 当点击外部链接时提示用户确认。
+1. **加載動畫**: 在頁面跳轉時顯示加載動畫。
+2. **外部鏈接確認**: 當點擊外部鏈接時提示用戶確認。
 
 ### 使用方法
-1. 在您的 HTML 文件中引入此脚本，将以下代码添加到 `<head>` 或 `<body>` 末尾：
+1. **引入腳本**: 在您的 HTML 文件中引入此腳本，將以下代碼添加到 `<head>` 或 `<body>` 末尾：
     ```html
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
     ```
-2. 脚本将自动处理以下情况：
-    - 在站点内导航时显示加载圈。
-    - 在跳转到外部网站时弹出确认对话框。
+2. **自動處理**: 腳本將自動處理以下情況：
+    - 在站點內導航時顯示加載動畫。
+    - 在跳轉到外部網站時彈出確認對話框。
 
-### 自定义
-- 您可以通过修改脚本中的 `.loading-spinner` CSS 来更改加载圈的外观。
-- 如需更改外部链接确认消息，请编辑 `confirm('Are you sure you want to navigate to an external website?');` 中的文本。
+### 自訂
+- **動畫外觀**: 通過修改腳本中的 `.loading-spinner` CSS 來更改加載動畫的外觀。
+- **確認消息**: 編輯 `confirm('Are you sure you want to navigate to an external website?');` 中的文本以更改外部鏈接確認消息。
+
+### 示例
+以下是一個將腳本集成到您的 HTML 中的簡單示例：
+```html
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的網站</title>
+    <script src="https://oinktech.github.io/website-help001/script.js"></script>
+    <style>
+        /* 自訂加載動畫樣式 */
+        .loading-spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #00bfff;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>歡迎來到我的網站</h1>
+    <a href="https://externalwebsite.com">訪問外部網站</a>
+</body>
+</html>
+```
+
+### 其他資源
+- [CSS Tricks - Loading Spinners](https://css-tricks.com/snippets/css/loading-spinners/)
+- [JavaScript Confirmation Dialog](https://developer.mozilla.org/en-US/docs/Web/API/Window/confirm)
+```
+
