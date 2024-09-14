@@ -2,10 +2,10 @@
 
 
 ## 目錄
-- [英文說明](#english-instructions)
+- [English instructions](#english-instructions)
 - [繁體中文說明](#繁體中文說明)
 
-## 英文說明
+## English instructions
 
 ### Features
 1. **Loading Spinner**: Displays a loading spinner during page navigation.
