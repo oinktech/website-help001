@@ -252,7 +252,7 @@
         hideLoader();
         alert('Loading took too long. The page will reload.');
         window.location.reload(); // Reload the page
-    }, 3000);
+    }, 10000);
 
     // Clear the timeout if the loader hides before 3 seconds
     loaderOverlay.addEventListener('transitionend', () => {
