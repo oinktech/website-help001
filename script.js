@@ -38,23 +38,22 @@
             height: 100%;
             background: var(--loader-bg);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             display: none;
             backdrop-filter: blur(10px);
-            overflow: hidden;
         }
         .loading-spinner {
             border: 8px solid var(--spinner-border);
             border-top: 8px solid var(--spinner-border-top);
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             animation: spin 1.5s linear infinite;
             box-shadow: 0 0 25px var(--box-shadow);
-            position: relative;
-            z-index: 1;
+            margin-bottom: 20px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -62,26 +61,25 @@
         }
         .loading-message {
             font-family: 'Roboto', Arial, sans-serif;
-            font-size: 22px;
+            font-size: 24px;
             color: var(--message-color);
-            margin-top: 20px;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 1;
+            text-align: center;
         }
         .loading-percentage {
             font-family: 'Roboto', Arial, sans-serif;
             font-size: 20px;
             color: var(--percentage-color);
-            margin-top: 10px;
+            margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 1;
         }
         .progress-bar {
-            width: 100%;
+            width: 80%;
+            max-width: 400px;
             height: 10px;
             background: var(--bar-bg);
             border-radius: 5px;
-            margin-top: 20px;
             position: relative;
             overflow: hidden;
             z-index: 1;
@@ -103,15 +101,17 @@
             border-radius: 50%;
             width: 35px;
             height: 35px;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 2;
         }
         .close-btn:hover {
             background: var(--btn-hover-bg);
+            transform: scale(1.1);
         }
         .loading-overlay.hidden {
             display: none;
