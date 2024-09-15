@@ -7,7 +7,7 @@
 
     // Create and inject styles for the loader
     const loaderStyle = document.createElement('style');
-    loaderStyle.innerHTML = `
+    loaderStyle.textContent = `
         :root {
             --loader-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
             --spinner-border: rgba(255, 255, 255, 0.5);
@@ -171,7 +171,7 @@
 
     let loaderAlreadyHidden = false;
 
-    // Function to show the loader with progress
+    // Show the loader with progress
     function showLoader() {
         if (!loaderAlreadyHidden) {
             loaderOverlay.classList.add('active');
@@ -182,7 +182,7 @@
         }
     }
 
-    // Function to hide the loader
+    // Hide the loader
     function hideLoader() {
         loaderAlreadyHidden = true;
         loaderOverlay.classList.remove('active');
@@ -191,7 +191,7 @@
         audio.currentTime = 0; // Reset audio
     }
 
-    // Function to update the progress percentage
+    // Update the progress percentage
     function updateProgress(percentage) {
         const percentageElement = loaderOverlay.querySelector('.loading-percentage');
         const progressBarFill = loaderOverlay.querySelector('.progress-bar-fill');
@@ -201,20 +201,24 @@
 
     // Simulate loading progress (for demonstration purposes)
     let progress = 0;
-    const progressInterval = setInterval(() => {
-        progress += 10;
+    function simulateLoading() {
         if (progress > 100) {
-            clearInterval(progressInterval);
             hideLoader();
             if (typeof window.loaderConfig.onComplete === 'function') {
                 window.loaderConfig.onComplete();
             }
-        } else {
-            updateProgress(progress);
+            return;
         }
-    }, 100);
 
-    // Function to handle link clicks
+        progress += 10;
+        updateProgress(progress);
+
+        requestAnimationFrame(() => setTimeout(simulateLoading, 100)); // Improve animation performance
+    }
+
+    simulateLoading();
+
+    // Handle link clicks
     function handleLinkClick(event) {
         event.preventDefault();
         const href = this.getAttribute('href');
