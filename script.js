@@ -2,39 +2,109 @@
     // Create and inject styles for the loader
     const loaderStyle = document.createElement('style');
     loaderStyle.innerHTML = `
+        :root {
+            --loader-bg: rgba(0, 0, 0, 0.5);
+            --spinner-border: rgba(255, 255, 255, 0.2);
+            --spinner-border-top: #00bfff;
+            --message-color: #fff;
+            --percentage-color: #fff;
+            --box-shadow: rgba(0, 0, 0, 0.3);
+            --bar-bg: rgba(255, 255, 255, 0.2);
+            --bar-fill: #00bfff;
+            --close-btn-bg: rgba(255, 255, 255, 0.2);
+            --close-btn-color: #fff;
+        }
+        
+        .light-mode {
+            --loader-bg: rgba(255, 255, 255, 0.8);
+            --spinner-border: rgba(0, 0, 0, 0.2);
+            --spinner-border-top: #00bfff;
+            --message-color: #000;
+            --percentage-color: #000;
+            --box-shadow: rgba(0, 0, 0, 0.1);
+            --bar-bg: rgba(0, 0, 0, 0.2);
+            --bar-fill: #00bfff;
+            --close-btn-bg: rgba(0, 0, 0, 0.2);
+            --close-btn-color: #000;
+        }
+
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: var(--loader-bg);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             display: none;
             backdrop-filter: blur(8px);
+            overflow: hidden;
         }
         .loading-spinner {
-            border: 8px solid rgba(255, 255, 255, 0.2);
-            border-top: 8px solid #00bfff;
+            border: 8px solid var(--spinner-border);
+            border-top: 8px solid var(--spinner-border-top);
             border-radius: 50%;
             width: 80px;
             height: 80px;
-            animation: spin 1.5s linear infinite;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            animation: spin 1.5s linear infinite, pulse 2s infinite;
+            box-shadow: 0 0 15px var(--box-shadow);
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
         .loading-message {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 20px;
-            color: #fff;
+            color: var(--message-color);
             margin-top: 20px;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .loading-percentage {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            color: var(--percentage-color);
+            margin-top: 10px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bar-bg);
+            border-radius: 4px;
+            margin-top: 20px;
+            position: relative;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--bar-fill);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--close-btn-bg);
+            color: var(--close-btn-color);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .loading-overlay.hidden {
             display: none;
@@ -49,29 +119,55 @@
     const loaderOverlay = document.createElement('div');
     loaderOverlay.className = 'loading-overlay';
     loaderOverlay.innerHTML = `
+        <button class="close-btn" aria-label="Close">&times;</button>
         <div class="loading-spinner"></div>
         <div class="loading-message">Please wait...</div>
+        <div class="loading-percentage">0%</div>
+        <div class="progress-bar">
+            <div class="progress-bar-fill"></div>
+        </div>
     `;
     document.body.appendChild(loaderOverlay);
 
-    // Function to show the loader
+    // Play background sound
+    const audio = new Audio('path/to/loading-sound.mp3');
+    audio.loop = true;
+
+    // Function to show the loader with progress
     function showLoader() {
         loaderOverlay.classList.add('active');
         document.body.style.overflow = 'hidden'; // Disable page scroll
+        audio.play();
+        updateProgress(0); // Start from 0%
     }
 
     // Function to hide the loader
     function hideLoader() {
         loaderOverlay.classList.remove('active');
         document.body.style.overflow = ''; // Enable page scroll
+        audio.pause();
+        audio.currentTime = 0; // Reset audio
     }
 
-    // Function to handle clicks on the overlay to hide loader
-    loaderOverlay.addEventListener('click', function (event) {
-        if (event.target === loaderOverlay) {
+    // Function to update the progress percentage
+    function updateProgress(percentage) {
+        const percentageElement = loaderOverlay.querySelector('.loading-percentage');
+        const progressBarFill = loaderOverlay.querySelector('.progress-bar-fill');
+        percentageElement.textContent = `${percentage}%`;
+        progressBarFill.style.width = `${percentage}%`;
+    }
+
+    // Simulate loading progress (for demonstration purposes)
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 10;
+        if (progress > 100) {
+            clearInterval(progressInterval);
             hideLoader();
+        } else {
+            updateProgress(progress);
         }
-    });
+    }, 500);
 
     // Function to handle link clicks
     function handleLinkClick(event) {
@@ -104,4 +200,26 @@
 
     // Hide the loader when the page has fully loaded
     window.addEventListener('load', hideLoader);
+
+    // Optional: Toggle light mode class based on user preference
+    function toggleLightMode(enable) {
+        if (enable) {
+            document.documentElement.classList.add('light-mode');
+        } else {
+            document.documentElement.classList.remove('light-mode');
+        }
+    }
+
+    // Example usage: Toggle light mode based on time of day or user preference
+    const isDayTime = new Date().getHours() >= 6 && new Date().getHours() < 18;
+    toggleLightMode(isDayTime);
+
+    // Close button functionality
+    loaderOverlay.querySelector('.close-btn').addEventListener('click', hideLoader);
+
+    // Hide loader if loading takes too long (e.g., 30 seconds)
+    const timeout = setTimeout(() => {
+        hideLoader();
+        alert('Loading took too long. Please try again.');
+    }, 30000);
 })();
