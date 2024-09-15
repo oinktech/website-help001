@@ -1,4 +1,10 @@
 (function () {
+    // Ensure the config object is available
+    if (!window.loaderConfig) {
+        console.error('Loader configuration is not loaded.');
+        return;
+    }
+
     // Create and inject styles for the loader
     const loaderStyle = document.createElement('style');
     loaderStyle.innerHTML = `
@@ -119,6 +125,11 @@
         .loading-overlay.active {
             display: flex;
         }
+        .loading-image {
+            width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
     `;
     document.head.appendChild(loaderStyle);
 
@@ -127,6 +138,7 @@
     loaderOverlay.className = 'loading-overlay';
     loaderOverlay.innerHTML = `
         <button class="close-btn" aria-label="Close">&times;</button>
+        <img src="${window.loaderConfig.imagePath}" alt="Logo" class="loading-image"/>
         <div class="loading-spinner"></div>
         <div class="loading-message">Please wait...</div>
         <div class="loading-percentage">0%</div>
@@ -137,7 +149,7 @@
     document.body.appendChild(loaderOverlay);
 
     // Play background sound
-    const audio = new Audio('path/to/loading-sound.mp3');
+    const audio = new Audio(window.loaderConfig.audioPath);
     audio.loop = true;
 
     // Function to show the loader with progress
@@ -217,9 +229,8 @@
         }
     }
 
-    // Example usage: Toggle light mode based on time of day or user preference
-    const isDayTime = new Date().getHours() >= 6 && new Date().getHours() < 18;
-    toggleLightMode(isDayTime);
+    // Example usage: Toggle light mode based on user preference
+    toggleLightMode(window.loaderConfig.lightMode);
 
     // Close button functionality
     loaderOverlay.querySelector('.close-btn').addEventListener('click', hideLoader);
