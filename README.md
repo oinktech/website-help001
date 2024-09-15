@@ -1,3 +1,5 @@
+
+
 # Loading Animation and External Link Confirmation Script
 
 ## Table of Contents
@@ -8,8 +10,9 @@
 
 ### Features
 1. **Loading Spinner**: Displays a stylish loading spinner during page navigation.
-2. **External Link Confirmation**: Prompts for user confirmation before navigating to external links.
+2. **External Link Confirmation**: Prompts users for confirmation before navigating to external links.
 3. **Customizable Configuration**: Easily configure spinner appearance, audio, and light mode using global variables.
+4. **Dynamic Loading**: The script can be dynamically loaded and initialized.
 
 ### Usage
 
@@ -37,18 +40,22 @@ To customize the loading spinner, audio, and light mode, define global variables
     window.loaderConfig = {
         imagePath: 'path/to/your-image.png', // Replace with your image path
         audioPath: 'path/to/loading-sound.mp3', // Replace with your audio path
-        lightMode: false // Set to true to enable light mode,
-       message: 'Loading...'
-     
+        lightMode: false, // Set to true to enable light mode
+        message: 'Loading...', // Custom loading message
+        onComplete: function() {
+            console.log('Loading complete!');
+            alert('The content is now loaded.');
+            document.getElementById('main-content').style.display = 'block';
+        }
     };
-    
 </script>
 ```
 
 ### Customization
 - **Spinner Appearance**: Adjust the spinner's size, color, and animation by editing the CSS in the script or your stylesheet.
-- **Confirmation Message**: Modify the confirmation dialog text to better fit your needs.
+- **Confirmation Message**: Modify the confirmation dialog text in the script to better fit your needs.
 - **Image and Audio Paths**: Set `imagePath` and `audioPath` in `window.loaderConfig` to use custom images and sounds.
+- **Completion Callback**: Use the `onComplete` function to define actions after loading is complete.
 
 ### Example
 Here’s a simple example to integrate the script into your HTML with configuration:
@@ -64,8 +71,13 @@ Here’s a simple example to integrate the script into your HTML with configurat
         window.loaderConfig = {
             imagePath: 'path/to/your-image.png', // Replace with your image path
             audioPath: 'path/to/loading-sound.mp3', // Replace with your audio path
-            lightMode: true // Enable light mode,
-            message: 'Loading'
+            lightMode: true, // Enable light mode
+            message: 'Loading...', // Custom loading message
+            onComplete: function() {
+                console.log('Loading complete!');
+                alert('The content is now loaded.');
+                document.getElementById('main-content').style.display = 'block';
+            }
         };
     </script>
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
@@ -100,6 +112,9 @@ Here’s a simple example to integrate the script into your HTML with configurat
 <body>
     <h1>Welcome to My Website</h1>
     <a href="https://externalwebsite.com">Visit External Website</a>
+    <div id="main-content" style="display: none;">
+        <!-- Main content of your website -->
+    </div>
 </body>
 </html>
 ```
@@ -116,6 +131,7 @@ Here’s a simple example to integrate the script into your HTML with configurat
 1. **加載動畫**: 在頁面跳轉時顯示時尚的加載動畫。
 2. **外部鏈接確認**: 在導航到外部鏈接之前提示用戶確認。
 3. **可自訂配置**: 使用全局變量輕鬆配置動畫外觀、音頻和光明模式。
+4. **動態加載**: 支援通過 JavaScript 動態加載和初始化腳本。
 
 ### 使用方法
 
@@ -143,7 +159,13 @@ Here’s a simple example to integrate the script into your HTML with configurat
     window.loaderConfig = {
         imagePath: 'path/to/your-image.png', // 替換為您的圖片路徑
         audioPath: 'path/to/loading-sound.mp3', // 替換為您的音頻路徑
-        lightMode: false // 設置為 true 以啟用光明模式
+        lightMode: false, // 設置為 true 以啟用光明模式
+        message: '加載中...', // 自訂加載消息
+        onComplete: function() {
+            console.log('加載完成!');
+            alert('內容已加載完成。');
+            document.getElementById('main-content').style.display = 'block';
+        }
     };
 </script>
 ```
@@ -152,6 +174,7 @@ Here’s a simple example to integrate the script into your HTML with configurat
 - **動畫外觀**: 通過修改腳本中的 `.loading-spinner` CSS 來更改加載動畫的大小、顏色和動畫效果，或在您的樣式表中進行修改。
 - **確認消息**: 編輯確認對話框中的文本，以更好地適應您的需求。
 - **圖片和音頻路徑**: 在 `window.loaderConfig` 中設置 `imagePath` 和 `audioPath` 以使用自訂圖片和聲音。
+- **完成回調**: 使用 `onComplete` 函數來定義加載完成後的操作。
 
 ### 示例
 以下是一個將腳本集成到您的 HTML 中的簡單示例，並進行了配置：
@@ -167,7 +190,13 @@ Here’s a simple example to integrate the script into your HTML with configurat
         window.loaderConfig = {
             imagePath: 'path/to/your-image.png', // 替換為您的圖片路徑
             audioPath: 'path/to/loading-sound.mp3', // 替換為您的音頻路徑
-            lightMode: true // 啟用光明模式
+            lightMode: true, // 啟用光明模式
+            message: '加載中...', // 自訂加載消息
+            onComplete: function() {
+                console.log('加載完成!');
+                alert('內容已加載完成。');
+                document.getElementById('main-content').style.display = 'block';
+            }
         };
     </script>
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
@@ -175,7 +204,9 @@ Here’s a simple example to integrate the script into your HTML with configurat
         /* 自訂加載動畫樣式 */
         .loading-spinner {
             position: fixed;
-            top: 50%;
+            top: 
+
+50%;
             left: 50%;
             transform: translate(-50%, -50%);
             border: 16px solid #f3f3f3;
@@ -202,6 +233,9 @@ Here’s a simple example to integrate the script into your HTML with configurat
 <body>
     <h1>歡迎來到我的網站</h1>
     <a href="https://externalwebsite.com">訪問外部網站</a>
+    <div id="main-content" style="display: none;">
+        <!-- 您網站的主要內容 -->
+    </div>
 </body>
 </html>
 ```
@@ -209,3 +243,6 @@ Here’s a simple example to integrate the script into your HTML with configurat
 ### 其他資源
 - [CSS Tricks - Loading Spinners](https://css-tricks.com/snippets/css/loading-spinners/)
 - [JavaScript Confirmation Dialog](https://developer.mozilla.org/en-US/docs/Web/API/Window/confirm)
+
+---
+
