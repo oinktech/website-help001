@@ -199,26 +199,44 @@
         progressBarFill.style.width = `${percentage}%`;
     }
 
-    // Simulate loading progress (for demonstration purposes)
-    let progress = 0;
-    function simulateLoading() {
-        if (progress > 100) {
-            hideLoader();
-            if (typeof window.loaderConfig.onComplete === 'function') {
-                window.loaderConfig.onComplete();
-            }
-            return;
-        }
-
-        progress += 10;
-        updateProgress(progress);
-
-        requestAnimationFrame(() => setTimeout(simulateLoading, 100)); // Improve animation performance
+    // Simulate a real loading process
+    function loadData() {
+        return new Promise((resolve) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'your-data-endpoint', true); // Replace with your actual data URL
+            xhr.onprogress = function (event) {
+                if (event.lengthComputable) {
+                    const percentage = Math.round((event.loaded / event.total) * 100);
+                    updateProgress(percentage);
+                }
+            };
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(xhr.response);
+                } else {
+                    console.error('Failed to load data.');
+                    resolve(null);
+                }
+            };
+            xhr.onerror = function () {
+                console.error('Network error.');
+                resolve(null);
+            };
+            xhr.send();
+        });
     }
 
-    simulateLoading();
+    // Function to start the loading process
+    async function startLoading() {
+        showLoader();
+        await loadData();
+        hideLoader();
+        if (typeof window.loaderConfig.onComplete === 'function') {
+            window.loaderConfig.onComplete();
+        }
+    }
 
-    // Handle link clicks
+    // Function to handle link clicks
     function handleLinkClick(event) {
         event.preventDefault();
         const href = this.getAttribute('href');
@@ -236,6 +254,6 @@
         link.addEventListener('click', handleLinkClick);
     });
 
-    // Show the loader initially
-    showLoader();
+    // Start the loading process
+    startLoading();
 })();
