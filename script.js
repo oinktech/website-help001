@@ -4,28 +4,30 @@
     loaderStyle.innerHTML = `
         :root {
             --loader-bg: rgba(0, 0, 0, 0.5);
-            --spinner-border: rgba(255, 255, 255, 0.2);
+            --spinner-border: rgba(255, 255, 255, 0.3);
             --spinner-border-top: #00bfff;
             --message-color: #fff;
             --percentage-color: #fff;
-            --box-shadow: rgba(0, 0, 0, 0.3);
-            --bar-bg: rgba(255, 255, 255, 0.2);
+            --box-shadow: rgba(0, 0, 0, 0.5);
+            --bar-bg: rgba(255, 255, 255, 0.3);
             --bar-fill: #00bfff;
-            --close-btn-bg: rgba(255, 255, 255, 0.2);
+            --close-btn-bg: rgba(0, 0, 0, 0.5);
             --close-btn-color: #fff;
+            --btn-hover-bg: rgba(0, 0, 0, 0.7);
         }
         
         .light-mode {
-            --loader-bg: rgba(255, 255, 255, 0.8);
-            --spinner-border: rgba(0, 0, 0, 0.2);
+            --loader-bg: rgba(255, 255, 255, 0.9);
+            --spinner-border: rgba(0, 0, 0, 0.3);
             --spinner-border-top: #00bfff;
             --message-color: #000;
             --percentage-color: #000;
             --box-shadow: rgba(0, 0, 0, 0.1);
-            --bar-bg: rgba(0, 0, 0, 0.2);
+            --bar-bg: rgba(0, 0, 0, 0.3);
             --bar-fill: #00bfff;
-            --close-btn-bg: rgba(0, 0, 0, 0.2);
+            --close-btn-bg: rgba(0, 0, 0, 0.3);
             --close-btn-color: #000;
+            --btn-hover-bg: rgba(0, 0, 0, 0.5);
         }
 
         .loading-overlay {
@@ -40,7 +42,7 @@
             align-items: center;
             z-index: 9999;
             display: none;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             overflow: hidden;
         }
         .loading-spinner {
@@ -49,46 +51,47 @@
             border-radius: 50%;
             width: 80px;
             height: 80px;
-            animation: spin 1.5s linear infinite, pulse 2s infinite;
-            box-shadow: 0 0 15px var(--box-shadow);
+            animation: spin 1.5s linear infinite;
+            box-shadow: 0 0 25px var(--box-shadow);
+            position: relative;
+            z-index: 1;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
         .loading-message {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 20px;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 22px;
             color: var(--message-color);
             margin-top: 20px;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
         }
         .loading-percentage {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 18px;
+            font-family: 'Roboto', Arial, sans-serif;
+            font-size: 20px;
             color: var(--percentage-color);
             margin-top: 10px;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
         }
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 10px;
             background: var(--bar-bg);
-            border-radius: 4px;
+            border-radius: 5px;
             margin-top: 20px;
             position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
         .progress-bar-fill {
             height: 100%;
             width: 0%;
             background: var(--bar-fill);
-            border-radius: 4px;
-            transition: width 0.5s;
+            border-radius: 5px;
+            transition: width 0.5s ease;
         }
         .close-btn {
             position: absolute;
@@ -98,13 +101,17 @@
             color: var(--close-btn-color);
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 16px;
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: background 0.3s;
+        }
+        .close-btn:hover {
+            background: var(--btn-hover-bg);
         }
         .loading-overlay.hidden {
             display: none;
