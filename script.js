@@ -212,7 +212,7 @@
         } else {
             updateProgress(progress);
         }
-    }, 300);
+    }, 100);
 
     // Function to handle link clicks
     function handleLinkClick(event) {
