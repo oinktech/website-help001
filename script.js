@@ -1,9 +1,15 @@
 (function () {
+    // Ensure the config object is available
+    if (!window.loaderConfig) {
+        console.error('Loader configuration is not loaded.');
+        return;
+    }
+
     // Create and inject styles for the loader
     const loaderStyle = document.createElement('style');
     loaderStyle.innerHTML = `
         :root {
-            --loader-bg: rgba(0, 0, 0, 0.5);
+            --loader-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
             --spinner-border: rgba(255, 255, 255, 0.3);
             --spinner-border-top: #00bfff;
             --message-color: #fff;
@@ -14,10 +20,12 @@
             --close-btn-bg: rgba(0, 0, 0, 0.5);
             --close-btn-color: #fff;
             --btn-hover-bg: rgba(0, 0, 0, 0.7);
+            --loader-text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            --progress-bar-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
         
         .light-mode {
-            --loader-bg: rgba(255, 255, 255, 0.9);
+            --loader-bg: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
             --spinner-border: rgba(0, 0, 0, 0.3);
             --spinner-border-top: #00bfff;
             --message-color: #000;
@@ -28,6 +36,8 @@
             --close-btn-bg: rgba(0, 0, 0, 0.3);
             --close-btn-color: #000;
             --btn-hover-bg: rgba(0, 0, 0, 0.5);
+            --loader-text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            --progress-bar-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
         .loading-overlay {
@@ -44,6 +54,7 @@
             z-index: 9999;
             display: none;
             backdrop-filter: blur(10px);
+            transition: opacity 0.3s ease;
         }
         .loading-spinner {
             border: 8px solid var(--spinner-border);
@@ -51,7 +62,7 @@
             border-radius: 50%;
             width: 100px;
             height: 100px;
-            animation: spin 1.5s linear infinite;
+            animation: spin 1.5s linear infinite, pulse 1s ease-in-out infinite;
             box-shadow: 0 0 25px var(--box-shadow);
             margin-bottom: 20px;
         }
@@ -59,12 +70,17 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
         .loading-message {
             font-family: 'Roboto', Arial, sans-serif;
             font-size: 24px;
             color: var(--message-color);
             margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-shadow: var(--loader-text-shadow);
             text-align: center;
         }
         .loading-percentage {
@@ -72,16 +88,17 @@
             font-size: 20px;
             color: var(--percentage-color);
             margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-shadow: var(--loader-text-shadow);
         }
         .progress-bar {
             width: 80%;
             max-width: 400px;
-            height: 10px;
+            height: 12px;
             background: var(--bar-bg);
             border-radius: 5px;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--progress-bar-shadow);
             z-index: 1;
         }
         .progress-bar-fill {
@@ -90,6 +107,7 @@
             background: var(--bar-fill);
             border-radius: 5px;
             transition: width 0.5s ease;
+            box-shadow: inset 0 0 10px var(--box-shadow);
         }
         .close-btn {
             position: absolute;
@@ -119,6 +137,11 @@
         .loading-overlay.active {
             display: flex;
         }
+        .loading-image {
+            width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
     `;
     document.head.appendChild(loaderStyle);
 
@@ -127,8 +150,9 @@
     loaderOverlay.className = 'loading-overlay';
     loaderOverlay.innerHTML = `
         <button class="close-btn" aria-label="Close">&times;</button>
+        <img src="${window.loaderConfig.imagePath}" alt="Logo" class="loading-image"/>
         <div class="loading-spinner"></div>
-        <div class="loading-message" data-key="loadingMessage">Loading...</div>
+        <div class="loading-message">${window.loaderConfig.message || 'Please wait...'}</div>
         <div class="loading-percentage">0%</div>
         <div class="progress-bar">
             <div class="progress-bar-fill"></div>
@@ -136,15 +160,15 @@
     `;
     document.body.appendChild(loaderOverlay);
 
+    // Play background sound
+    const audio = new Audio(window.loaderConfig.audioPath);
+    audio.loop = true;
+
     // Function to show the loader with progress
     function showLoader() {
         loaderOverlay.classList.add('active');
         document.body.style.overflow = 'hidden'; // Disable page scroll
-        if (window.loaderConfig.audioPath) {
-            const audio = new Audio(window.loaderConfig.audioPath);
-            audio.loop = true;
-            audio.play();
-        }
+        audio.play();
         updateProgress(0); // Start from 0%
     }
 
@@ -152,11 +176,8 @@
     function hideLoader() {
         loaderOverlay.classList.remove('active');
         document.body.style.overflow = ''; // Enable page scroll
-        if (window.loaderConfig.audioPath) {
-            const audio = new Audio(window.loaderConfig.audioPath);
-            audio.pause();
-            audio.currentTime = 0; // Reset audio
-        }
+        audio.pause();
+        audio.currentTime = 0; // Reset audio
     }
 
     // Function to update the progress percentage
@@ -167,89 +188,74 @@
         progressBarFill.style.width = `${percentage}%`;
     }
 
-    // Load language data from IndexedDB
-    function loadLanguageFromIndexedDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open('languageDB', 1);
-            
-            request.onsuccess = (event) => {
-                const db = event.target.result;
-                const transaction = db.transaction('languages', 'readonly');
-                const store = transaction.objectStore('languages');
-                const getRequest = store.get('currentLang');
+    // Simulate loading progress (for demonstration purposes)
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += 10;
+        if (progress > 100) {
+            clearInterval(progressInterval);
+            hideLoader();
+        } else {
+            updateProgress(progress);
+        }
+    }, 500);
 
-                getRequest.onsuccess = () => {
-                    const lang = getRequest.result || 'zh-Hant'; // Default to Traditional Chinese
-                    resolve(lang);
-                };
+    // Function to handle link clicks
+    function handleLinkClick(event) {
+        const target = event.target.closest('a');
+        if (target) {
+            event.preventDefault();
 
-                getRequest.onerror = () => {
-                    reject('Error fetching language from IndexedDB');
-                };
-            };
+            const href = target.getAttribute('href');
+            const isExternalLink = href.startsWith('http') && !href.includes(window.location.hostname);
 
-            request.onerror = () => {
-                reject('Error opening IndexedDB');
-            };
-        });
+            if (isExternalLink) {
+                const userConfirmed = confirm('Are you sure you want to navigate to an external website?');
+                if (userConfirmed) {
+                    showLoader();
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 500);
+                }
+            } else {
+                showLoader();
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        }
     }
 
-    // Update loader language text based on the language file
-    function updateLoaderLanguage(lang) {
-        fetch(`https://oinktech.github.io/lang/${lang}.json`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.querySelectorAll('[data-key]').forEach(element => {
-                    const key = element.getAttribute('data-key');
-                    if (data[key]) {
-                        element.textContent = data[key];
-                    }
-                });
+    // Attach the click event handler to the document
+    document.addEventListener('click', handleLinkClick);
 
-                // Change text direction if needed
-                const rtlLanguages = ['ar', 'he', 'fa']; // Add any RTL languages here
-                if (rtlLanguages.includes(lang)) {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                } else {
-                    document.documentElement.removeAttribute('dir');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading language file:', error);
-                // Optionally, you can reload the default language or show an error message
-                updateLoaderLanguage('zh-Hant'); // Default to Traditional Chinese
-            });
+    // Hide the loader when the page has fully loaded
+    window.addEventListener('load', hideLoader);
+
+    // Optional: Toggle light mode class based on user preference
+    function toggleLightMode(enable) {
+        if (enable) {
+            document.documentElement.classList.add('light-mode');
+        } else {
+            document.documentElement.classList.remove('light-mode');
+        }
     }
 
-    // Initialize language and show loader
-    window.onload = function() {
-        loadLanguageFromIndexedDB().then(lang => {
-            updateLoaderLanguage(lang);
-        }).catch(error => {
-            console.error('Error during language initialization:', error);
-            updateLoaderLanguage('zh-Hant'); // Default to Traditional Chinese
-        });
+    // Example usage: Toggle light mode based on user preference
+    toggleLightMode(window.loaderConfig.lightMode);
 
-        showLoader();
-        
-        // Hide loader after 3 seconds if not loaded correctly
-        const hideLoaderTimeout = setTimeout(() => {
-            hideLoader();
-            alert('Loading took too long. Please try again.');
-        }, 30000);
+    // Close button functionality
+    loaderOverlay.querySelector('.close-btn').addEventListener('click', hideLoader);
 
-        // Clear timeout and hide loader when page has fully loaded
-        window.addEventListener('load', () => {
-            clearTimeout(hideLoaderTimeout);
-            hideLoader();
-        });
+    // Hide loader if loading takes too long (e.g., 3 seconds) and reload the page
+    let loaderTimeout = setTimeout(() => {
+        hideLoader();
+        alert('Loading took too long. The page will reload.');
+        window.location.reload(); // Reload the page
+    }, 3000);
 
-        // Close button functionality
-        loaderOverlay.querySelector('.close-btn').addEventListener('click', hideLoader);
-    };
+    // Clear the timeout if the loader hides before 3 seconds
+    loaderOverlay.addEventListener('transitionend', () => {
+        clearTimeout(loaderTimeout);
+    });
 })();
