@@ -1,7 +1,7 @@
 (function () {
-    // Ensure the config object is available
-    if (!window.loaderConfig) {
-        console.error('Loader configuration is not loaded.');
+    // Ensure the config object is available and contains required fields
+    if (!window.loaderConfig || !window.loaderConfig.imagePath || !window.loaderConfig.audioPath) {
+        console.error('Loader configuration is missing required fields.');
         return;
     }
 
@@ -9,19 +9,20 @@
     const loaderStyle = document.createElement('style');
     loaderStyle.innerHTML = `
         :root {
-            --loader-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
-            --spinner-border: rgba(255, 255, 255, 0.3);
+            --loader-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+            --spinner-border: rgba(255, 255, 255, 0.5);
             --spinner-border-top: #00bfff;
             --message-color: #fff;
             --percentage-color: #fff;
-            --box-shadow: rgba(0, 0, 0, 0.5);
-            --bar-bg: rgba(255, 255, 255, 0.3);
+            --box-shadow: rgba(0, 0, 0, 0.7);
+            --bar-bg: rgba(255, 255, 255, 0.4);
             --bar-fill: #00bfff;
-            --close-btn-bg: rgba(0, 0, 0, 0.5);
+            --close-btn-bg: rgba(0, 0, 0, 0.6);
             --close-btn-color: #fff;
-            --btn-hover-bg: rgba(0, 0, 0, 0.7);
-            --loader-text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
-            --progress-bar-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            --btn-hover-bg: rgba(0, 0, 0, 0.8);
+            --loader-text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            --progress-bar-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+            --animation-duration: 0.75s;
         }
         
         .light-mode {
@@ -38,6 +39,7 @@
             --btn-hover-bg: rgba(0, 0, 0, 0.5);
             --loader-text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             --progress-bar-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            --animation-duration: 0.5s;
         }
 
         .loading-overlay {
@@ -52,18 +54,19 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            display: none;
-            backdrop-filter: blur(10px);
-            transition: opacity 0.3s ease;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity var(--animation-duration) ease, visibility var(--animation-duration) ease;
+            backdrop-filter: blur(8px);
         }
         .loading-spinner {
             border: 8px solid var(--spinner-border);
             border-top: 8px solid var(--spinner-border-top);
             border-radius: 50%;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             animation: spin 1.5s linear infinite, pulse 1s ease-in-out infinite;
-            box-shadow: 0 0 25px var(--box-shadow);
+            box-shadow: 0 0 30px var(--box-shadow);
             margin-bottom: 20px;
         }
         @keyframes spin {
@@ -93,9 +96,9 @@
         .progress-bar {
             width: 80%;
             max-width: 400px;
-            height: 12px;
+            height: 15px;
             background: var(--bar-bg);
-            border-radius: 5px;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
             box-shadow: var(--progress-bar-shadow);
@@ -105,40 +108,42 @@
             height: 100%;
             width: 0%;
             background: var(--bar-fill);
-            border-radius: 5px;
-            transition: width 0.5s ease;
-            box-shadow: inset 0 0 10px var(--box-shadow);
+            border-radius: 10px;
+            transition: width var(--animation-duration) ease;
+            box-shadow: inset 0 0 12px var(--box-shadow);
         }
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             background: var(--close-btn-bg);
             color: var(--close-btn-color);
             border: none;
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background 0.3s, transform 0.3s;
+            transition: background var(--animation-duration) ease, transform var(--animation-duration) ease;
             z-index: 2;
         }
         .close-btn:hover {
             background: var(--btn-hover-bg);
-            transform: scale(1.1);
+            transform: scale(1.2);
         }
         .loading-overlay.hidden {
-            display: none;
+            visibility: hidden;
+            opacity: 0;
         }
         .loading-overlay.active {
-            display: flex;
+            visibility: visible;
+            opacity: 1;
         }
         .loading-image {
-            width: 100px;
+            width: 120px;
             height: auto;
             margin-bottom: 20px;
         }
@@ -149,8 +154,8 @@
     const loaderOverlay = document.createElement('div');
     loaderOverlay.className = 'loading-overlay';
     loaderOverlay.innerHTML = `
+        ${window.loaderConfig.showImage !== false ? `<img src="${window.loaderConfig.imagePath}" alt="Logo" class="loading-image"/>` : ''}
         <button class="close-btn" aria-label="Close">&times;</button>
-        <img src="${window.loaderConfig.imagePath}" alt="Logo" class="loading-image"/>
         <div class="loading-spinner"></div>
         <div class="loading-message">${window.loaderConfig.message || 'Please wait...'}</div>
         <div class="loading-percentage">0%</div>
@@ -164,16 +169,22 @@
     const audio = new Audio(window.loaderConfig.audioPath);
     audio.loop = true;
 
+    let loaderAlreadyHidden = false;
+
     // Function to show the loader with progress
     function showLoader() {
-        loaderOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Disable page scroll
-        audio.play();
-        updateProgress(0); // Start from 0%
+        if (!loaderAlreadyHidden) {
+            loaderOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Disable page scroll
+            audio.play();
+            updateProgress(0); // Start from 0%
+            loaderAlreadyHidden = false;
+        }
     }
 
     // Function to hide the loader
     function hideLoader() {
+        loaderAlreadyHidden = true;
         loaderOverlay.classList.remove('active');
         document.body.style.overflow = ''; // Enable page scroll
         audio.pause();
@@ -195,6 +206,9 @@
         if (progress > 100) {
             clearInterval(progressInterval);
             hideLoader();
+            if (typeof window.loaderConfig.onComplete === 'function') {
+                window.loaderConfig.onComplete();
+            }
         } else {
             updateProgress(progress);
         }
@@ -202,60 +216,22 @@
 
     // Function to handle link clicks
     function handleLinkClick(event) {
-        const target = event.target.closest('a');
-        if (target) {
-            event.preventDefault();
-
-            const href = target.getAttribute('href');
-            const isExternalLink = href.startsWith('http') && !href.includes(window.location.hostname);
-
-            if (isExternalLink) {
-                const userConfirmed = confirm('Are you sure you want to navigate to an external website?');
-                if (userConfirmed) {
-                    showLoader();
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 500);
-                }
-            } else {
-                showLoader();
-                setTimeout(() => {
-                    window.location.href = href;
-                }, 500);
-            }
-        }
+        event.preventDefault();
+        const href = this.getAttribute('href');
+        showLoader();
+        setTimeout(() => {
+            window.location.href = href;
+        }, 1000);
     }
 
-    // Attach the click event handler to the document
-    document.addEventListener('click', handleLinkClick);
-
-    // Hide the loader when the page has fully loaded
-    window.addEventListener('load', hideLoader);
-
-    // Optional: Toggle light mode class based on user preference
-    function toggleLightMode(enable) {
-        if (enable) {
-            document.documentElement.classList.add('light-mode');
-        } else {
-            document.documentElement.classList.remove('light-mode');
-        }
-    }
-
-    // Example usage: Toggle light mode based on user preference
-    toggleLightMode(window.loaderConfig.lightMode);
-
-    // Close button functionality
+    // Add event listener for close button
     loaderOverlay.querySelector('.close-btn').addEventListener('click', hideLoader);
 
-    // Hide loader if loading takes too long (e.g., 3 seconds) and reload the page
-    let loaderTimeout = setTimeout(() => {
-        hideLoader();
-        alert('Loading took too long. The page will reload.');
-        window.location.reload(); // Reload the page
-    }, 10000);
-
-    // Clear the timeout if the loader hides before 3 seconds
-    loaderOverlay.addEventListener('transitionend', () => {
-        clearTimeout(loaderTimeout);
+    // Add event listeners for all links
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', handleLinkClick);
     });
+
+    // Show the loader initially
+    showLoader();
 })();
