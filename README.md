@@ -37,8 +37,11 @@ To customize the loading spinner, audio, and light mode, define global variables
     window.loaderConfig = {
         imagePath: 'path/to/your-image.png', // Replace with your image path
         audioPath: 'path/to/loading-sound.mp3', // Replace with your audio path
-        lightMode: false // Set to true to enable light mode
+        lightMode: false // Set to true to enable light mode,
+       message: 'Loading...'
+     
     };
+    
 </script>
 ```
 
@@ -61,7 +64,8 @@ Here’s a simple example to integrate the script into your HTML with configurat
         window.loaderConfig = {
             imagePath: 'path/to/your-image.png', // Replace with your image path
             audioPath: 'path/to/loading-sound.mp3', // Replace with your audio path
-            lightMode: true // Enable light mode
+            lightMode: true // Enable light mode,
+            message: 'Loading'
         };
     </script>
     <script src="https://oinktech.github.io/website-help001/script.js"></script>
